@@ -6,18 +6,18 @@ export default function Contato() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState({ name: '', email: '', message: '' });
   const [feedback, setFeedback] = useState('');
   const [focusedField, setFocusedField] = useState('');
 
   function submit() {
-    const nextErrors = {};
+    const nextErrors = { name: '', email: '', message: '' };
     if (name.trim().length < 2) nextErrors.name = 'Informe seu nome com pelo menos 2 caracteres.';
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) nextErrors.email = 'Informe um e-mail válido.';
     if (message.trim().length < 10) nextErrors.message = 'Escreva uma mensagem com pelo menos 10 caracteres.';
     setErrors(nextErrors);
     setFeedback('');
-    if (Object.keys(nextErrors).length > 0) {
+    if (Object.values(nextErrors).some(Boolean)) {
       Alert.alert('Confira os campos', 'Corrija os campos indicados antes de enviar.');
       return;
     }
