@@ -1,0 +1,26 @@
+name: Mobile checks
+on:
+  push:
+    branches: [main, develop, 'release/**']
+  pull_request:
+    branches: [main, develop]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: andre-lanches-app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: andre-lanches-app/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run export

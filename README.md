@@ -1,28 +1,98 @@
-# André Lanches
+# André Lanches — app mobile
 
-Cardápio estático em português, com estética tropical e neon inspirada na referência enviada. HTML, CSS e JavaScript puro, sem dependências de produção.
+Aplicativo Android/iOS em React Native e Expo Blank (JavaScript), com identidade tropical e neon inspirada na referência fornecida. O site estático original permanece na raiz; o aplicativo está em `andre-lanches-app/`.
 
-## Ver o projeto
+![Prévia mobile](docs/images/mobile-preview.jpg)
 
-Abra `index.html` no navegador. Não precisa instalar pacotes ou executar build.
+## Executar
 
-## O que mudou
+Requisitos: Node.js 24 LTS, npm, Git e Expo Go compatível com SDK 58 (ou build de desenvolvimento/preview).
 
-1. HTML semântico, idioma, descrição, viewport e navegação por seções.
-2. Paleta da referência: coral `#EB9998`, roxo `#5D549C`, azul acinzentado `#6F70A2`, vinho `#7E3A63` e lilás `#A373D3`; teal e amarelo complementam o neon e o pôr do sol.
-3. Capa tropical, promoção, nove produtos, apresentação e contato.
-4. Layout responsivo, foco visível, link para pular navegação e respeito à preferência por movimento reduzido.
-5. Filtros por categoria com estado acessível. Sem JavaScript, os nove produtos permanecem visíveis.
+```powershell
+cd andre-lanches-app
+npm ci
+npm start
+```
 
-Fotos, produtos e preços foram preservados da versão original, incluindo o X-Burguer a R$ 1,50 e o combo a R$ 9,90. Confirme os valores antes de publicar.
+Escaneie o QR do terminal no Expo Go, com celular e computador na mesma rede. Para conferir no navegador: `npm run web`. Consulte [o guia de publicação](docs/PUBLICACAO.md) para compatibilidade do Expo Go e EAS.
 
-O telefone original `(11) 1111-1111` é um placeholder. A seção de contato informa que o número está em atualização. Substitua por contato real antes de oferecer pedidos. Este projeto é um cardápio: não processa compras nem pagamentos.
+## Funcionalidades
 
-## Manutenção
+- Abas Lanches, Sobre Nós e Contato, controladas por `useState`.
+- Cabeçalho com logo, banner de promoção configurável e nove produtos com imagens locais, descrição e preço em reais.
+- Filtros de lanches, porções e bebidas.
+- História criativa, missão e diferenciais na tela Sobre Nós.
+- Formulário de Nome, E-mail e Mensagem com validação, feedback visual e `Alert.alert` nativo.
+- Botão flutuante que abre `tel:+5561999998888`, número fornecido para teste, com tratamento de falha.
+- SafeAreaView, ajuste de teclado, rolagem, estados acessíveis e tamanho mínimo dos botões.
 
-- Conteúdo e preços: `index.html`.
-- Cores e layout: `estilo.css`; cores centralizadas em `:root`.
-- Filtros: `script.js`.
-- Imagens: `images/`.
+O formulário é demonstrativo: não envia nem armazena mensagens em servidor. O app não processa compras ou pagamentos. A ligação só é iniciada pelo usuário no discador.
 
-As alterações são locais. Esta pasta não tinha metadados `.git`; não foi feito commit, push ou deploy.
+## Estrutura
+
+```text
+andre-lanches-app/
+  App.jsx                    # estado de navegação e composição das telas
+  src/
+    components/
+      Header.jsx
+      BannerPromocao.jsx
+      ListaProdutos.jsx
+      SobreNos.jsx
+      Contato.jsx
+      EntregaFlutuante.jsx
+    data/products.js         # conteúdo, preços e imagens locais
+    theme.js                 # paleta centralizada
+    formatPrice.js
+  assets/images/
+  __tests__/app.test.jsx
+  eas.json
+```
+
+O código do app é JavaScript/JSX. `tsconfig.json` e `assets.d.ts` servem apenas à verificação estática do JavaScript e às declarações das imagens. A navegação por `useState` atende ao roteiro solicitado, em lugar do Expo Router sugerido genericamente pelo template.
+
+## Identidade e conteúdo
+
+Paleta da referência: `#EB9998`, `#5D549C`, `#6F70A2`, `#7E3A63` e `#A373D3`, complementada por teal e amarelo de pôr do sol. As fotos e os nove preços foram preservados, incluindo X-Burguer a R$ 1,50 e combo X-Salada + Batata a R$ 9,90. Confirme os valores antes de usar comercialmente. A história é uma proposta criativa para a atividade, sem alegações de datas, prêmios ou origem histórica.
+
+## Verificação
+
+```powershell
+cd andre-lanches-app
+npm run typecheck
+npm run lint
+npm test
+npm run export
+npx expo-doctor
+```
+
+Os testes de integração cobrem navegação, filtros, formulário inválido/válido, discagem e recuperação após falha. As APIs de telefone e alerta são simuladas nos testes. A revisão visual foi feita no preview web em 390 × 844; o teste físico em Android/iOS continua necessário.
+
+O workflow `.github/workflows/mobile-checks.yml` repete as verificações em main, develop, releases e pull requests. Não executa publicação automática.
+
+A auditoria npm ainda reporta vulnerabilidades transitivas no conjunto Expo/Metro/Jest e ferramentas relacionadas. Foi aplicado `npm audit fix` sem `--force`; não foram forçados downgrades incompatíveis. Reavalie com `npm audit` antes de disponibilizar comercialmente. Veja [a revisão da atividade](docs/REVISAO.md).
+
+## Gitflow
+
+- `main`: versão integrada para entrega.
+- `develop`: integração das funcionalidades.
+- `feature/*`: cada etapa foi criada antes da implementação e recebeu commit próprio.
+- `release/1.0.0`: revisão de entrega, integrada em main e develop, com tag `v1.0.0`.
+
+As branches foram mantidas para permitir a inspeção da atividade. Para a próxima alteração:
+
+```powershell
+git switch develop
+git switch -c feature/nome-da-alteracao
+# implementar e testar
+git add caminho/dos/arquivos
+git commit -m "feat: descreva a alteração"
+git switch develop
+git merge --no-ff feature/nome-da-alteracao
+```
+
+## Publicação
+
+Repositório: [ApenasGui/andre-lanches](https://github.com/ApenasGui/andre-lanches).
+
+A configuração local de EAS está preparada, mas **o preview externo Expo ainda depende de login e vinculação à conta**. Nenhum link/QR público de EAS foi gerado. O passo a passo e a lista de testes no aparelho estão em [PUBLICACAO.md](docs/PUBLICACAO.md).
