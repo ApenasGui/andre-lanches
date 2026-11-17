@@ -4,13 +4,21 @@
     "slug": "andre-lanches-app",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/images/logo.png",
     "userInterfaceStyle": "dark",
-    "ios": { "supportsTablet": true, "bundleIdentifier": "com.apenasgui.andrelanches" },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.apenasgui.andrelanches"
+    },
     "android": {
       "package": "com.apenasgui.andrelanches",
-      "adaptiveIcon": { "foregroundImage": "./assets/android-icon-foreground.png", "backgroundColor": "#21162F" }
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/logo.png",
+        "backgroundColor": "#21162F"
+      }
     },
-    "web": { "favicon": "./assets/favicon.png" }
+    "web": {
+      "favicon": "./assets/images/logo.png"
+    }
   }
 }
