@@ -1,7 +1,7 @@
 name: Mobile checks
 on:
   push:
-    branches: [main, develop, 'feature/**', 'release/**']
+    branches: [main, develop, 'release/**']
   pull_request:
     branches: [main, develop]
 permissions:
