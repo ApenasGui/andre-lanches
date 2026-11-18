@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Animated, Image, Platform, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Animated, Platform, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import BannerPromocao from './BannerPromocao';
 import { colors } from '../theme';
@@ -7,6 +7,48 @@ import { products } from '../data/products';
 import { formatPrice } from '../formatPrice';
 
 const categories = ['Todos', 'Lanches', 'Porções', 'Bebidas'];
+
+function ProductCard({ product }) {
+  const [motion] = useState(() => new Animated.Value(0));
+
+  function animate(active) {
+    Animated.spring(motion, {
+      toValue: active ? 1 : 0,
+      useNativeDriver: Platform.OS !== 'web',
+      speed: 22,
+      bounciness: 5,
+    }).start();
+  }
+
+  return (
+    <Animated.View testID={`product-${product.id}`} style={[styles.cardMotion, { transform: [
+      { scale: motion.interpolate({ inputRange: [0, 1], outputRange: [1, 1.015] }) },
+      { translateY: motion.interpolate({ inputRange: [0, 1], outputRange: [0, -3] }) },
+      { translateX: motion.interpolate({ inputRange: [0, 1], outputRange: [0, 4] }) },
+    ] }]}>
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={`${product.name}, ${formatPrice(product.price)}`}
+        onPressIn={() => animate(true)}
+        onPressOut={() => animate(false)}
+        onHoverIn={() => animate(true)}
+        onHoverOut={() => animate(false)}
+        style={styles.card}
+      >
+        <Animated.Image source={product.image} accessibilityLabel={product.name} style={[styles.productImage, { transform: [
+          { translateX: motion.interpolate({ inputRange: [0, 1], outputRange: [0, -6] }) },
+          { rotate: motion.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '-2deg'] }) },
+        ] }]} />
+        <View style={styles.details}>
+          <Text style={styles.category}>{product.category.toUpperCase()}</Text>
+          <Text style={styles.productName}>{product.name}</Text>
+          <Text style={styles.description}>{product.description}</Text>
+          <Text style={styles.price}>{formatPrice(product.price)}</Text>
+        </View>
+      </Pressable>
+    </Animated.View>
+  );
+}
 
 export default function ListaProdutos() {
   const [category, setCategory] = useState('Todos');
@@ -41,7 +83,10 @@ export default function ListaProdutos() {
             <Text style={styles.eyebrow}>SABOR LOCAL. VIBE TROPICAL.</Text>
             <Text accessibilityRole="header" style={styles.title}>FOME DE{ '\n' }OUTRO NÍVEL.</Text>
             <Text style={styles.intro}>O sol se põe. A fome chega.</Text>
-            <Image source={require('../../assets/images/bigtower.jpg')} accessibilityLabel="Hambúrguer Big Tower" style={styles.heroImage} />
+            <Animated.Image source={require('../../assets/images/bigtower.jpg')} accessibilityLabel="Hambúrguer Big Tower" style={[styles.heroImage, { transform: [
+              { rotate: heroMotion.interpolate({ inputRange: [0, 1], outputRange: ['-3deg', '-1deg'] }) },
+              { translateX: heroMotion.interpolate({ inputRange: [0, 1], outputRange: [0, 10] }) },
+            ] }]} />
             <View style={styles.heroTag}><Text style={styles.heroTagText}>SEU PRÓXIMO PIT STOP ↗</Text></View>
           </LinearGradient>
         </Pressable>
@@ -59,15 +104,7 @@ export default function ListaProdutos() {
       </View>
       <Text style={styles.count} accessibilityLiveRegion="polite">{visibleProducts.length} opções para sua fome</Text>
       {visibleProducts.map((product) => (
-        <View key={product.id} style={styles.card} testID={`product-${product.id}`}>
-          <Image source={product.image} accessibilityLabel={product.name} style={styles.productImage} />
-          <View style={styles.details}>
-            <Text style={styles.category}>{product.category.toUpperCase()}</Text>
-            <Text style={styles.productName}>{product.name}</Text>
-            <Text style={styles.description}>{product.description}</Text>
-            <Text style={styles.price}>{formatPrice(product.price)}</Text>
-          </View>
-        </View>
+        <ProductCard key={product.id} product={product} />
       ))}
       <Text style={styles.note}>Consulte ingredientes, sabores, disponibilidade e condições de entrega por telefone.</Text>
     </ScrollView>
@@ -94,6 +131,7 @@ const styles = StyleSheet.create({
   filterText: { color: colors.muted, fontSize: 12, fontWeight: '700' },
   activeFilterText: { color: colors.background },
   count: { color: colors.muted, fontSize: 12 },
+  cardMotion: { borderRadius: 18 },
   card: { flexDirection: 'row', backgroundColor: colors.surface, borderRadius: 18, padding: 12, gap: 14, alignItems: 'center', borderWidth: 1, borderColor: colors.border },
   productImage: { width: 92, height: 110, borderRadius: 12, resizeMode: 'cover', backgroundColor: colors.slate },
   details: { flex: 1, gap: 5 },
