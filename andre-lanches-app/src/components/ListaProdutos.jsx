@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Animated, Image, Platform, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import BannerPromocao from './BannerPromocao';
 import { colors } from '../theme';
@@ -10,18 +10,42 @@ const categories = ['Todos', 'Lanches', 'Porções', 'Bebidas'];
 
 export default function ListaProdutos() {
   const [category, setCategory] = useState('Todos');
+  const [heroMotion] = useState(() => new Animated.Value(0));
   const visibleProducts = category === 'Todos' ? products : products.filter((product) => product.category === category);
+
+  function setHeroMotion(active) {
+    Animated.spring(heroMotion, {
+      toValue: active ? 1 : 0,
+      useNativeDriver: Platform.OS !== 'web',
+      speed: 20,
+      bounciness: 7,
+    }).start();
+  }
 
   return (
     <ScrollView contentContainerStyle={styles.content}>
-      <LinearGradient colors={[colors.purple, colors.wine, colors.coral]} style={styles.hero}>
-        <View style={styles.sun} accessible={false} />
-        <Text style={styles.eyebrow}>SABOR LOCAL. VIBE TROPICAL.</Text>
-        <Text accessibilityRole="header" style={styles.title}>FOME DE{ '\n' }OUTRO NÍVEL.</Text>
-        <Text style={styles.intro}>O sol se põe. A fome chega.</Text>
-        <Image source={require('../../assets/images/bigtower.jpg')} accessibilityLabel="Hambúrguer Big Tower" style={styles.heroImage} />
-        <View style={styles.heroTag}><Text style={styles.heroTagText}>SEU PRÓXIMO PIT STOP ↗</Text></View>
-      </LinearGradient>
+      <Animated.View style={[styles.heroMotion, { transform: [
+        { scale: heroMotion.interpolate({ inputRange: [0, 1], outputRange: [1, 1.025] }) },
+        { translateY: heroMotion.interpolate({ inputRange: [0, 1], outputRange: [0, -5] }) },
+      ] }]}>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Banner André Lanches. Toque para ver o cardápio."
+          onPressIn={() => setHeroMotion(true)}
+          onPressOut={() => setHeroMotion(false)}
+          onHoverIn={() => setHeroMotion(true)}
+          onHoverOut={() => setHeroMotion(false)}
+        >
+          <LinearGradient colors={[colors.purple, colors.wine, colors.coral]} style={styles.hero}>
+            <View style={styles.sun} accessible={false} />
+            <Text style={styles.eyebrow}>SABOR LOCAL. VIBE TROPICAL.</Text>
+            <Text accessibilityRole="header" style={styles.title}>FOME DE{ '\n' }OUTRO NÍVEL.</Text>
+            <Text style={styles.intro}>O sol se põe. A fome chega.</Text>
+            <Image source={require('../../assets/images/bigtower.jpg')} accessibilityLabel="Hambúrguer Big Tower" style={styles.heroImage} />
+            <View style={styles.heroTag}><Text style={styles.heroTagText}>SEU PRÓXIMO PIT STOP ↗</Text></View>
+          </LinearGradient>
+        </Pressable>
+      </Animated.View>
       <BannerPromocao title="X-Salada + Batata" description="Dupla boa demais pra deixar passar." price={9.9} />
       <View><Text style={styles.kicker}>ESCOLHA SEU FAVORITO</Text><Text accessibilityRole="header" style={styles.heading}>Nosso cardápio<Text style={styles.coral}>.</Text></Text></View>
       <View style={styles.filters}>
@@ -52,6 +76,7 @@ export default function ListaProdutos() {
 
 const styles = StyleSheet.create({
   content: { padding: 20, gap: 20 },
+  heroMotion: { borderRadius: 26, zIndex: 1 },
   hero: { borderRadius: 26, padding: 24, overflow: 'hidden' },
   sun: { position: 'absolute', width: 190, height: 190, borderRadius: 95, backgroundColor: colors.sun, top: 112, right: -40, opacity: 0.6 },
   eyebrow: { color: colors.sun, fontSize: 9, letterSpacing: 1.6, fontWeight: '800' },
