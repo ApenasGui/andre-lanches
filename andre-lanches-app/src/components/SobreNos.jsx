@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
   content: { padding: 24, gap: 18 },
   kicker: { color: colors.teal, fontSize: 10, fontWeight: '800', letterSpacing: 2 },
   title: { color: colors.text, fontSize: 34, fontWeight: '900', lineHeight: 39, letterSpacing: -1 },
-  image: { width: '100%', height: 200, borderRadius: 22, resizeMode: 'cover' },
+  image: { width: '100%', maxWidth: 320, height: 320, alignSelf: 'center', borderRadius: 22, resizeMode: 'cover' },
   heading: { color: colors.coral, fontSize: 22, fontWeight: '800', marginTop: 8 },
   paragraph: { color: colors.muted, fontSize: 15, lineHeight: 24 },
   mission: { padding: 24, borderRadius: 22, gap: 12 },
